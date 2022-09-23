@@ -1,10 +1,21 @@
 **中央空调管理**
 
-> 该项目目前仅完成功能验证，由于暂不知晓所使用的库使用的开源协议，故暂不开源；
->
-> 待全部完成后将使用 **GPL** 协议开源，且不可用于商业。
+---
+
+**开源协议：CC-BY-NC-SA 3.0，知识共享许可协议-署名-非商业使用-相同方式共享。**
 
 > **Copyright (c) 2021 ChenYuanliang.**
+
+---
+
+> 使用的库的开源协议及版权信息：
+> 
+> 1. ESP32-eduroam: MIT License; Copyright (c) 2018 Martin
+> 2. AliyunIoTSDK ; Copyright (c) 2008-2015 Nicholas O'Leary
+> 3. ArduinoJson; The MIT License (MIT); Copyright © 2014-2021 Benoit BLANCHON
+> 4. Crypto;  Copyright (C) 2012 Southern Storm Software, Pty Ltd.
+> 5. DFRobot_SHT3x; Copyright 2010 DFRobot Co.Ltd
+> 6. PubSubClient; Copyright (c) 2008-2020 Nicholas O'Leary
 
 ---
 
@@ -13,7 +24,7 @@
 1. 物联网云平台：阿里云物联网云平台，可通过网页向IoT设备端发送指令，接收IoT设备上传的状态、温湿度、电量等信息；
 2. IoT设备端：通过ESP32连接校园WIFI，可接收云平台下发的指令，上传房间空调状态、温湿度、设备电量等信息；
 
-------
+---
 
 # **0. 目录**
 
@@ -25,44 +36,44 @@
 光电楼现有的中央空调控制流程如下：
 > 全程采用**红外**单向通信，左侧 **<u>智能遥控</u>** 是本项目设备，右侧三个设备为光电楼现有设备。
 
-![光电楼现有中央空调控制流程](Image/%E5%B9%BB%E7%81%AF%E7%89%871.jpg)
+![光电楼现有中央空调控制流程](./0.Docs/Image/%E5%B9%BB%E7%81%AF%E7%89%871.jpg)
 这是光电楼现有的线控器，型号**KJR-29A**，按键型，无背光。
 
-<img src="Image/1635173161792.jpg" alt="光电楼现有空调线控器" style="zoom: 25%;" />
+<img src="./0.Docs/Image/1635173161792.jpg" alt="光电楼现有空调线控器" style="zoom: 25%;" />
 
 下图是线控器的反面:
 
 > 自上向下线序：C(5V), D(GND), A(IR+), B(IR-)。
 
-<img src="Image/1635173161759.jpg" alt="线控器反面" style="zoom: 25%;" />
+<img src="./0.Docs/Image/1635173161759.jpg" alt="线控器反面" style="zoom: 25%;" />
 
 下图是接收器，型号：**KJR-02B**
 
 > 左边自上向下线序：黄(5V)，黑(GND)，棕(IR+)，红(IR-)，白(RUN)；（其中，RUN表示空调运行指示，来自室内机。）
 
-<img src="Image/1635173162093.jpg" alt="1635173162093" style="zoom:67%;" />
+<img src="./0.Docs/Image/1635173162093.jpg" alt="1635173162093" style="zoom:67%;" />
 
-<img src="Image/1635173161977.jpg" alt="接收器" style="zoom:33%;" />
+<img src="./0.Docs/Image/1635173161977.jpg" alt="接收器" style="zoom:33%;" />
 
 右边自上向下线序如下图：
 
 > 线序：E->GND; SW->手动开关; BUZ->蜂鸣器; AL->报警指示灯; M.F.->制热指示灯; TIME->定时指示灯; RUN->运行指示灯; REV->直连红外接收头；
 
-<img src="Image/1635173161943.jpg" alt="接收器右边线序" style="zoom: 50%;" />
+<img src="./0.Docs/Image/1635173161943.jpg" alt="接收器右边线序" style="zoom: 50%;" />
 
 下图是室内机，型号：**MDV-D90**
 
-![室内机](Image/image-20211107093418380.png)
+![室内机](./0.Docs/Image/image-20211107093418380.png)
 
-<img src="Image/%E7%A9%BA%E8%B0%83%E9%93%AD%E7%89%8C.jpg" alt="空调铭牌" style="zoom:33%;" />
+<img src="./0.Docs/Image/%E7%A9%BA%E8%B0%83%E9%93%AD%E7%89%8C.jpg" alt="空调铭牌" style="zoom:33%;" />
 
 下图是室外机：
 
-![室外机](Image/image-20211107093453817.png)
+![室外机](./0.Docs/Image/image-20211107093453817.png)
 
 ## **1.2 硬件方案**
 
-<img src="Image/1635173161777.jpg" alt="1635173161777" style="zoom:50%;" />
+<img src="./0.Docs/Image/1635173161777.jpg" alt="1635173161777" style="zoom:50%;" />
 
 硬件方案采用：
 
@@ -73,25 +84,30 @@
 5. TC4056A + DW03D + CW2015构成**锂电池充电管理 + 过充过放保护 + 电量统计**功能；
 5. 板载TYPE-C接口，串口，自动下载电路。
 
+开源地址：**立创开源平台**
+
+1. 遥控器：https://oshwhub.com/OpticalMoe/smartremote
+2. 遥控面板：https://oshwhub.com/OpticalMoe/smartremote_copy
+
 ## **1.3 原理图**
 
-**硬件资料： ../1.Hardware**
+**硬件资料： ./1.Hardware**
 
-使用 **立创EDA** 软件绘制，工程源码： **../1.Hardware\工程源码**
+使用 **立创EDA** 软件绘制，开源地址：
 
 ### 1.3.1 主控
 
 ESP32-WROOM模组，双核MCU，板载WIFI、蓝牙。可替换为ESP32其他版本。
 
-> 立创商城编号：C503587；数据手册： **../1.Hardware\datasheet\esp32_datasheet_cn.pdf & esp32-wroom-32_datasheet_cn.pdf**
+> 立创商城编号：C503587；[数据手册](https://atta.szlcsc.com/upload/public/pdf/source/20170925/C95209_1506321763821990573.pdf?Expires=4070880000&OSSAccessKeyId=LTAIJDIkh7KmGS1H&Signature=FnpcxKRDpjzVc19%2FPTrfi3rf2j0%3D&response-content-disposition=attachment%3Bfilename%3DC95209_ESP32-WROOM-32_2017-09-25.PDF)
 >
-> 开发板原理图： **../1.Hardware\datasheet\SchematicsforESP32.pdf**
+> 开发板原理图： **见立创开源**
 
 > 部分引脚因功能冲突或设计失误，需要在V1.1版修正。
 >
 > 热释电功能取消；串口TX/RX画反；AmbientLight调至IO34；
 
-![image-20211108194420726](Image/image-20211108194420726.png)
+![image-20211108194420726](./0.Docs/Image/image-20211108194420726.png)
 
 ### 1.3.2 USB
 
@@ -99,15 +115,15 @@ USB部分包括TYPE-C、串口和自动下载电路。
 
 R8、R9电阻防止TYPE-C接口触发快充。
 
-> **串口** 立创商城编号：C84681；数据手册： **../1.Hardware\datasheet\CH340C.PDF**
+> **串口** 立创商城编号：C84681；数据手册： **./1.Hardware/datasheet/CH340C.PDF**
 >
-> **TYPE-C** 立创商城编号：C165948；数据手册：  **../1.Hardware\datasheet\TYPE-C-31-M-12母座贴片.PDF**
+> **TYPE-C** 立创商城编号：C165948；数据手册：  **./1.Hardware/datasheet/TYPE-C-31-M-12母座贴片.PDF**
 
 > DP&DN画反，正确接法DP->D+, DN->D-；
 >
 > 串口电源改为3.3V，否则电流倒灌会导致ESP32的WIFI无法正常工作。
 
-![image-20211108195307956](Image/image-20211108195307956.png)
+![image-20211108195307956](./0.Docs/Image/image-20211108195307956.png)
 
 ### 1.3.3 锂电池充电
 
@@ -115,31 +131,31 @@ TC4056A，可更换为其他锂电池充电芯片。
 
 锂电池400mah，安全充电电流0.5C=200mA，建议充电电流300mA，一部分给降压。
 
-> **TC4056A** 立创商城编号：C84051；数据手册：  **../1.Hardware\datasheet\TC4056A.PDF**
+> **TC4056A** 立创商城编号：C84051；数据手册：  **./1.Hardware/datasheet/TC4056A.PDF**
 
 > 删除R14
 
-![image-20211108195706174](Image/image-20211108195706174.png)
+![image-20211108195706174](./0.Docs/Image/image-20211108195706174.png)
 
 ### 1.3.4 降压
 
 ME6217C33M5G，降压。只要输出3.3V，电流大于300mA即可。记得加0.1uF，100uF或更大的电容。
 
-> **ME6217C33M5G** 立创商城编号：C427602；数据手册：  **../1.Hardware\datasheet\ME6217C33M5G.PDF**
+> **ME6217C33M5G** 立创商城编号：C427602；数据手册：  **./1.Hardware/datasheet/ME6217C33M5G.PDF**
 
-![image-20211108194537862](Image/image-20211108194537862.png)
+![image-20211108194537862](./0.Docs/Image/image-20211108194537862.png)
 
 ### 1.3.5 锂电池保护
 
 DW03D，锂电池过充过放保护芯片。
 
-> **DW03D** 立创商城编号：C82200；数据手册：  **../1.Hardware\datasheet\DW03D.PDF**
+> **DW03D** 立创商城编号：C82200；数据手册：  **./1.Hardware/datasheet/DW03D.PDF**
 
 > 改变开关位置至降压前；
 >
 > GND和BAT-间添加0R电阻，当电池自带保护电路时，可选择该0R电阻跳过板载锂电池保护电路。
 
-![image-20211108200218900](Image/image-20211108200218900.png)
+![image-20211108200218900](./0.Docs/Image/image-20211108200218900.png)
 
 
 
@@ -147,49 +163,49 @@ DW03D，锂电池过充过放保护芯片。
 
 红外部分使用四颗侧发光红外LED和一颗正发光红外LED组成。侧发光LED互90度安装，保证360度覆盖。正发光LED保证正面120度覆盖。
 
-> **红外发射** 立创商城编号：C273626；数据手册：  **../1.Hardware\datasheet\1206灯珠侧发红光.PDF**
+> **红外发射** 立创商城编号：C273626；数据手册：  **./1.Hardware/datasheet/1206灯珠侧发红光.PDF**
 >
-> **红外接收** 立创商城编号：C390037；数据手册：  **../1.Hardware\datasheet\插件短脚接收头38KHZ遥控接收头.PDF**
+> **红外接收** 立创商城编号：C390037；数据手册：  **./1.Hardware/datasheet/插件短脚接收头38KHZ遥控接收头.PDF**
 
 > LED限流电阻27R 0603，5颗LED均需单独串接限流电阻，不可共用。
 
-![image-20211108200543094](Image/image-20211108200543094.png)
+![image-20211108200543094](./0.Docs/Image/image-20211108200543094.png)
 
 ### 1.3.7 温湿度传感器
 
 目前选用GXHT30，可测温湿度，IIC通信，精度较高。可更换为DS18B20或其他廉价温度传感器，改一下程序即可。
 
->  **GXHT30** 立创商城编号：C2758005；数据手册：  **../1.Hardware\datasheet\温湿度传感器.PDF**
+>  **GXHT30** 立创商城编号：C2758005；数据手册：  **./1.Hardware/datasheet/温湿度传感器.PDF**
 
 > AIFRT_GXHT30和GXHT30_RST引脚可删除；0R电阻删除；PCB板四周开槽；
 
-![image-20211108194611140](Image/image-20211108194611140.png)
+![image-20211108194611140](./0.Docs/Image/image-20211108194611140.png)
 
 ### 1.3.8 环境光传感器
 
 ALS-PT19-315C/L177/TR8。搭配电阻10K。输出电压信号，使用ADC采集即可。
 
->  **ALS-PT19-315C/L177/TR8** 立创商城编号：C146233；数据手册：  **../1.Hardware\datasheet\ALS-PT19-315C%2FL177%2FTR8.PDF**
+>  **ALS-PT19-315C/L177/TR8** 立创商城编号：C146233；数据手册：  **./1.Hardware/datasheet/ALS-PT19-315C%2FL177%2FTR8.PDF**
 
 > （注：ESP32的WIFI和ADC2不能同时工作，但是和ADC1能同时工作，ADC1引脚包括：SENSOR_VP/SENSOR_VN/GPIO_34/GPIO_35）
 
-![image-20211108194709502](Image/image-20211108194709502.png)
+![image-20211108194709502](./0.Docs/Image/image-20211108194709502.png)
 
 ###  1.3.9 外设
 
 按键为侧按键，按键行程0.4mm。
 
->  **按键** 立创商城编号：C393942；数据手册：  **../1.Hardware\datasheet\2_4_3.5半包小贝贝TS-018小侧按键M165蓝牙耳机轻触开关.PDF**
+>  **按键** 立创商城编号：C393942；数据手册：  **./1.Hardware/datasheet/2_4_3.5半包小贝贝TS-018小侧按键M165蓝牙耳机轻触开关.PDF**
 
-![image-20211108201028694](Image/image-20211108201028694.png)
+![image-20211108201028694](./0.Docs/Image/image-20211108201028694.png)
 
 # **2.程序**
 
 程序采用Arduino（https://www.arduino.cc/en/software）平台，需要安装：
 
-* ESP32支持包： **../2.Software\SoftwarePackage\SoftwarePackage\32_package_1.0.6_arduino.cn.exe**
+* ESP32支持包： **./2.Software/SoftwarePackage/SoftwarePackage/32_package_1.0.6_arduino.cn.exe**
 
-* CH340驱动：**../2.Software\SoftwarePackage\SoftwarePackage\CH341SER.EXE**
+* CH340驱动：**./2.Software/SoftwarePackage/SoftwarePackage/CH341SER.EXE**
 
 包含库：**../2.Software\库**
 
@@ -252,13 +268,13 @@ void TaskBlink(void *pvParameters)
 
 红外遥控部分需要添加irRemote.c&.h文件。
 
-**红外编码见 ../2.Software\R05d电控功能说明书.pdf  >  六、编码规范 > 1&9部分** 
+**红外编码见 ./2.Software/R05d电控功能说明书.pdf  >  六、编码规范 > 1&9部分** 
 
 > irRemote.c&.h文件主要负责红外部分编码和发送；
 >
 > 发送部分采用硬件LEDC产生38KHz方波，硬件TIM控制红外发送引脚搭接到方波时长。
 >
-> irRemote.c&.h文件见 **../2.Software\SmartRemote_Vx.x\SmartRemote\irRemote.cpp & irRemote.h**。
+> irRemote.c&.h文件见 **./2.Software/SmartRemote_Vx.x/SmartRemote/irRemote.cpp & irRemote.h**。
 
 ```C++
 #include "irRemote.h"
@@ -327,7 +343,7 @@ void TaskRemote(void *pvParameters)
 https://github.com/yu-tou/arduino-aliyun-iot-sdk
 
 > AliyunIoTSDK库需要魔改，具体魔改见github或自行搜索该库。
-> 也可将 **../2.Software\库** 的 **AliyunIoTSDK、ArduinoJson、Crypto** 文件夹拷贝进Arduino库路径。
+> 也可将 **./2.Software/库** 的 **AliyunIoTSDK、ArduinoJson、Crypto** 文件夹拷贝进Arduino库路径。
 >
 > **一般路径为：  C:\Users\电脑用户名\Documents\Arduino\libraries**。
 
@@ -625,7 +641,7 @@ void TaskSensor(void *pvParameters)
 
 通常，物联网设备只能接入使用WPA2-PSK的wifi（只需要SSID和password的），而一般的校园采用的是WPA3-Enterprise方式的wifi，需要SSID、用户名、密码才可接入。以下程序将使IoT设备可接入校园wifi。
 
-**../2.Software\ESP32-eduroam\experimental_example\experimental_example.ino**
+**./2.Software/ESP32-eduroam/experimental_example/experimental_example.ino**
 
 该程序为github开源库例程。可直接搜索 **esp eduroam** 获得。
 
@@ -770,7 +786,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 > 室内温湿度数据来源于远古时期调试数据，不是当时室内实际温湿度。
 
-![image-20211109091107086](Image/image-20211109091107086.png)
+![image-20211109091107086](./0.Docs/Image/image-20211109091107086.png)
 
 
 
@@ -778,7 +794,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 划拉到下面，找到**web应用**标签卡，点击下方**新建**，输入 应用名称，选择所属项目，根据需要填写描述即可。
 
-<img src="Image/image-20211109091333924.png" alt="image-20211109091333924" style="zoom: 67%;" />
+<img src="./0.Docs/Image/image-20211109091333924.png" alt="image-20211109091333924" style="zoom: 67%;" />
 
 ## 4.2 编写页面UI
 
@@ -786,7 +802,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 点击左侧 **导航布局** 标签，选择合适的样式（本项目使用第二种）。点击下面的**配置**，可在右侧编辑显示的logo、颜色、字体。
 
-<img src="Image/image-20211109110912042.png" alt="image-20211109110912042" style="zoom: 70%;" /><img src="Image/image-20211109110926767.png" alt="image-20211109110926767" style="zoom:50%;" />
+<img src="./0.Docs/Image/image-20211109110912042.png" alt="image-20211109110912042" style="zoom: 70%;" /><img src="./0.Docs/Image/image-20211109110926767.png" alt="image-20211109110926767" style="zoom:50%;" />
 
 
 
@@ -794,7 +810,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 点击左侧**页面**，点击**新建**，选择**空白**或其他合适的页面模板；点击右侧**首页**可将该页面作为首页；
 
-<img src="Image/image-20211109111333412.png" alt="image-20211109111333412" style="zoom:65%;" />
+<img src="./0.Docs/Image/image-20211109111333412.png" alt="image-20211109111333412" style="zoom:65%;" />
 
 ### 4.2.3 组件树
 
@@ -811,15 +827,15 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 | 群控 二次确认      | 弹窗容器 | 弹窗       |
 | 空调开关           | 控制     | 开关       |
 
-<img src="Image/image-20211109112111233.png" alt="image-20211109112111233" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211109112111233.png" alt="image-20211109112111233" style="zoom:67%;" />
 
 ## 4.3 功能
 
 有些功能按正常思维无法实现，所以这里另辟蹊径，会显得复杂点，但总算可以实现。
 
-编辑过程中请随时随手点击 **保存** 按钮，在页面最上面的右侧，<img src="Image/image-20211109165147098.png" alt="image-20211109165147098" style="zoom: 50%;" />
+编辑过程中请随时随手点击 **保存** 按钮，在页面最上面的右侧，<img src="./0.Docs/Image/image-20211109165147098.png" alt="image-20211109165147098" style="zoom: 50%;" />
 
-编辑过程中也可随时点击 **预览** ，预览最终效果。<img src="Image/image-20211109165300898.png" alt="image-20211109165300898" style="zoom:50%;" />
+编辑过程中也可随时点击 **预览** ，预览最终效果。<img src="./0.Docs/Image/image-20211109165300898.png" alt="image-20211109165300898" style="zoom:50%;" />
 
 ### 4.3.1. 房间号 下拉框
 
@@ -835,7 +851,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 >
 > 点击左下角**产品管理**，在弹出的先页面中点击**关联物联网平台产品**，勾选需要关联的产品即可。返回原浏览器页面继续操作。
 
-<img src="Image/image-20211109155606484.png" alt="image-20211109155606484" style="zoom:50%;" />
+<img src="./0.Docs/Image/image-20211109155606484.png" alt="image-20211109155606484" style="zoom:50%;" />
 
 ### 4.3.2. 空调开关
 
@@ -860,7 +876,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 点击 **赋值**，选择 **value**，选择 **Power**;
 
-<img src="Image/image-20211109160636242.png" alt="image-20211109160636242" style="zoom: 80%;" />
+<img src="./0.Docs/Image/image-20211109160636242.png" alt="image-20211109160636242" style="zoom: 80%;" />
 
 ### 4.3.3. 温度滑块
 
@@ -876,13 +892,13 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
   变量：TargetTemp / value / 当前值
 
-  <img src="Image/image-20211109161626062.png" alt="image-20211109161626062" style="zoom: 67%;" /><img src="Image/image-20211109161643080.png" alt="image-20211109161643080" style="zoom: 80%;" />
+  <img src="./0.Docs/Image/image-20211109161626062.png" alt="image-20211109161626062" style="zoom: 67%;" /><img src="./0.Docs/Image/image-20211109161643080.png" alt="image-20211109161643080" style="zoom: 80%;" />
 
 ### 4.3.4. 模式 按钮标签组
 
   **样式** 默认选项卡设置：依次填入：**自动、制冷、除湿、制热、送风** 注意顺序；字体、颜色等根据需要改变。
 
-  <img src="Image/image-20211109161855791.png" alt="image-20211109161855791" style="zoom:67%;" />
+  <img src="./0.Docs/Image/image-20211109161855791.png" alt="image-20211109161855791" style="zoom:67%;" />
 
   **交互** 共5个交互，大体相同。
 
@@ -892,7 +908,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 * 动作：赋值给变量；变量名 Mode；**值 0**（依次填入 0~4）
 
-  <img src="Image/image-20211109162832476.png" alt="image-20211109162832476" style="zoom:67%;" />
+  <img src="./0.Docs/Image/image-20211109162832476.png" alt="image-20211109162832476" style="zoom:67%;" />
 
 ### 4.3.5. 风速 按钮标签组
 
@@ -906,7 +922,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 * 动作：赋值给变量；变量名 WindSpeed；**值 0**（依次填入 0~3）
 
-<img src="Image/image-20211109163137702.png" alt="image-20211109163137702" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211109163137702.png" alt="image-20211109163137702" style="zoom:67%;" />
 
 ### 4.3.6. 室内温湿度 卡片数字
 
@@ -922,7 +938,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 **交互**部分不用操作。
 
-<img src="Image/image-20211109163843469.png" alt="image-20211109163843469" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211109163843469.png" alt="image-20211109163843469" style="zoom:67%;" />
 
 ### 4.3.7. 更新 按钮
 
@@ -949,7 +965,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 * 属性：开关
 * 设置值：变量 > Power
 
-<img src="Image/image-20211109164729344.png" alt="image-20211109164729344" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211109164729344.png" alt="image-20211109164729344" style="zoom:67%;" />
 
 ### 4.3.8. 群控 按钮
 
@@ -960,7 +976,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 * 选择组件：弹窗-群控确认（来自之前设置的弹窗）
 * 弹窗数据源：静态数据
 
-<img src="Image/image-20211109164952118.png" alt="image-20211109164952118" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211109164952118.png" alt="image-20211109164952118" style="zoom:67%;" />
 
 **弹窗**
 
@@ -968,17 +984,17 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 
 在右侧，勾选 **样式** 下的 **蒙版**，编辑 **标题&操作按钮** 等。
 
-<img src="Image/image-20211111103120625.png" alt="image-20211111103120625" style="zoom:67%;" />
+<img src="./0.Docs/Image/image-20211111103120625.png" alt="image-20211111103120625" style="zoom:67%;" />
 
 最终效果：
 
-<img src="Image/image-20211111103151405.png" alt="image-20211111103151405" style="zoom:50%;" />
+<img src="./0.Docs/Image/image-20211111103151405.png" alt="image-20211111103151405" style="zoom:50%;" />
 
 点击保存，预览最终效果。在预览界面您可直接操作页面按钮滑块等。如果一切顺利，您可在IoT调试界面看到web下发的数据内容。
 
 # 5.测试
 
-**../0.Docs\测试视频.mp4**
+**./0.Docs/测试视频.mp4**
 
 下图来自视频截图。
 
@@ -986,7 +1002,7 @@ web应用开发部分坑比较多，或者是我不会用，这部分会写的�
 2. 设备收到IoT下发信息，使用 **红外** 对线控器发送信息，同时绿灯闪烁；
 3. 线控器收到 **红外** 信号，解码后将信息显示在界面上，同时通过有线方式将信息转发给接收器；（线控器℃图标上方形似wifi图标的标志表示正在向接收器发送信息）
 
-![studio_video_1635244709967-00.00.07.133](Image/studio_video_1635244709967-00.00.07.133.png)
+![studio_video_1635244709967-00.00.07.133](./0.Docs/Image/studio_video_1635244709967-00.00.07.133.png)
 
 ------
 
